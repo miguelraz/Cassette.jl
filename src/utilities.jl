@@ -1,3 +1,15 @@
+########################
+# Force Specialization #
+########################
+
+@generated function specialized_call(f::F, input...) where {F}
+    typed_input = [:(input[$i]::$(input[i])) for i in 1:nfields(input)]
+    return quote
+        $(Expr(:meta, :inline))
+        return (f::$F)($(typed_input...))
+    end
+end
+
 #########################
 # Expression Generation #
 #########################
